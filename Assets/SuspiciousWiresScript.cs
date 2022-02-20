@@ -26,9 +26,6 @@ public class SuspiciousWiresScript : MonoBehaviour
     public GameObject m_Cube;
     public float m_DistanceZ;
 
-    private Plane m_Plane;
-    private Vector3 m_DistanceFromCamera;
-
     private void Start()
     {
         _moduleId = _moduleIdCounter++;
@@ -42,9 +39,6 @@ public class SuspiciousWiresScript : MonoBehaviour
             RightSels[i].OnHighlight += delegate () { RightHighlight(j); };
             RightSels[i].OnHighlight += delegate () { RightHighlightEnded(j); };
         }
-
-        m_DistanceFromCamera = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Camera.main.transform.position.z - m_DistanceZ);
-        m_Plane = new Plane(new Vector3(0, 0, 1f), m_DistanceFromCamera);
     }
 
     private void Update()
@@ -54,7 +48,8 @@ public class SuspiciousWiresScript : MonoBehaviour
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             var enter = 0.0f;
             var allHit = Physics.RaycastAll(ray);
-            if (m_Plane.Raycast(ray, out enter))
+            var plane = new Plane(transform.up, -0.1f * transform.lossyScale.y);
+            if (plane.Raycast(ray, out enter))
             {
                 Vector3 hitPoint = ray.GetPoint(enter);
                 m_Cube.transform.position = hitPoint;
